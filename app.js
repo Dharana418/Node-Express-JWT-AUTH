@@ -10,7 +10,7 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 // database connection
-const dbURI = 'mongodb+srv://admin:<db_password>@agrovista.8l8dq.mongodb.net/node-auth';
+const dbURI = 'mongodb+srv://admin:Dharana@1234@agrovista.8l8dq.mongodb.net/node-auth';
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
   .then((result) => app.listen(3000))
   .catch((err) => console.log(err));
