@@ -10,5 +10,4 @@ module.exports.login_get = (req, res) => {
 module.exports.login_post = (req, res) => {
     const { email, password } = req.body;
     res.send('login post');
-}  
-
+}
