@@ -8,6 +8,7 @@ module.exports.login_get = (req, res) => {
   res.render('login');
 }   
 module.exports.login_post = (req, res) => {
-  res.send('login post');
+    const { email, password } = req.body;
+    res.send('login post');
 }  
 
