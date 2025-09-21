@@ -5,9 +5,17 @@ const handleErrors=(err)=>{
   console.log(err.message,err.code);
   let error={email:'',password:''};
 
+  //duplicate error code
+  if(err.code===11000){
+    error.email='that email is already registered';
+    return error;
+  }
+
   //validation errors
   if(err.message.includes('user validation failed')){
-    console.log(err);
+    console.log(Object.values(err.errors).forEach(({properties})=>{
+      error[properties.path]=properties.message;
+    }));
   }
 }
 module.exports.signup_get = (req, res) => {
