@@ -1,29 +1,46 @@
 const mongoose = require('mongoose');
-const { type } = require('os');
-const {isEmail}=require('validator');
+const bcrypt = require('bcrypt');
+const { isEmail } = require('validator');
 
-const userSchema=new mongoose.Schema({
-    email:{
-        type:String,
-        required:[true,'please enter an email'],
-        unique:[true,'that email is already registered'],
-        lowercase:true,
-        validate:[isEmail,'please enter a valid email']
-    },
-    password:{
-        type:String,
-        required:[true,'please enter a password'],
-        minlength:[6,'minimum password length is 6 characters']
-    },
-    createdAt:{
-        type:Date,
-        default:Date.now
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: [true, 'please enter an email'],
+    unique: true,
+    lowercase: true,
+    validate: [isEmail, 'please enter a valid email']
+  },
+  password: {
+    type: String,
+    required: [true, 'please enter a password'],
+    minlength: [6, 'minimum password length is 6 characters']
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// hash password before saving
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next(); // only hash if new/changed
+  const salt = await bcrypt.genSalt();
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// custom login method
+userSchema.statics.login = async function (email, password) {
+  const user = await this.findOne({ email });
+  if (user) {
+    const auth = await bcrypt.compare(password, user.password);
+    if (auth) {
+      return user;
     }
-});
-userSchema.pre('save',async function(next){
-    const salt=await bcrypt.genSalt();
-    this.password=await bcrypt.hash(this.password,salt);
-    next();
-});
-const User=mongoose.model('User',userSchema);
-module.exports=User;
+    throw Error('incorrect password');
+  }
+  throw Error('incorrect email');
+};
+
+const User = mongoose.model('User', userSchema);
+module.exports = User;
