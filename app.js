@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/authroutes');
+const { requireAuth,checkuser } = require('./middleware/authmiddleware');
+
 
 const app = express();
 
@@ -19,9 +21,12 @@ mongoose.connect(dbURI)
   .catch(err => console.log(err));
 
 // routes
+app.get('*', checkuser);
 app.get('/', (req, res) => res.render('home'));
-app.get('/smoothies', (req, res) => res.render('smoothies'));
+app.get('/smoothies', requireAuth, (req, res) => res.render('smoothies'));
 app.use(authRoutes); // ✅ now signup/login work at /signup and /login
+
+
 
 // cookies
 app.get('/set-cookies', (req, res) => {
@@ -47,3 +52,4 @@ app.use((req, res) => {
   // OR if you want an EJS view:
   // res.status(404).render('404');
 });
+
