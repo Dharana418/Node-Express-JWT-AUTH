@@ -1,4 +1,5 @@
 const User=require('../models/User.js');
+const jwt=require('jsonwebtoken');
 
 //handle errors
 const handleErrors=(err)=>{
@@ -18,6 +19,12 @@ const handleErrors=(err)=>{
     }));
   }
 }
+const maxAge=3*24*60*60;
+const createToken=(id)=>{
+  return jwt.sign({id},'net ninja secret',{
+    expiresIn:maxAge
+  });
+}
 module.exports.signup_get = (req, res) => {
   res.render('signup');
 }
@@ -28,6 +35,8 @@ module.exports.signup_post = async (req, res) => {
   const { email, password } = req.body;
   try{
     const user=await User.create({email,password});
+    const token=createToken(user._id);
+    res.cookie('jwt',token,{httpOnly:true,maxAge:maxAge*1000});
     res.status(201).json({user});
   }
   catch(err){
