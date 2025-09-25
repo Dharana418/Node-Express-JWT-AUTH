@@ -46,10 +46,6 @@ app.get('/read-cookies', (req, res) => {
 
 // 404 handler
 app.use((req, res) => {
-  // send plain text if you don’t want a view
   res.status(404).send("404 Not Found");
-
-  // OR if you want an EJS view:
-  // res.status(404).render('404');
 });
 
