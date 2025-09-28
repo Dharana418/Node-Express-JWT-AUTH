@@ -12,7 +12,6 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.set('view engine', 'ejs');
 
 // database connection
 const dbURI = 'mongodb+srv://admin:6kkAhPcJW5SCtWET@agrovista.8l8dq.mongodb.net/node-auth?retryWrites=true&w=majority';
@@ -23,7 +22,6 @@ mongoose.connect(dbURI)
 // routes
 app.get('*', checkuser);
 app.get('/', (req, res) => res.render('home'));
-app.get('/smoothies', requireAuth, (req, res) => res.render('smoothies'));
 app.use(authRoutes); // ✅ now signup/login work at /signup and /login
 
 
